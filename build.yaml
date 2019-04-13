@@ -2,16 +2,20 @@ version: 0.2
 # build image : aws/codebuild/java:openjdk-8-1.6.0
 env:
     variables:
-      IMAGE_NAME: "prod-atp-ecr-front"
-      ACCOUNT_ID: "394374453764"
-      CONTAINER_NAME: "prod-atp-front"
+      DEV_ACCOUNT_ID: "119334752141"
+      PROD_ACCOUNT_ID: "578611160639"
 phases:
   install:
     commands:
       - apt-get update -y
       - apt-get install -y docker.io
       - echo Build version check...
-      - aws --version && python --version && java -version  && mvn --version && gradle -v
+      - aws --version
+      - python --version
+      - java -version
+      - mvn --version
+      - gradle -v
+      - node -v
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
@@ -28,12 +32,14 @@ phases:
   post_build:
     commands:
       - echo Building the Docker image... `date`
-      - docker build -t ${IMAGE_NAME} .
+      - docker build -t hsy-crossaccount-test .
+      - docker tag hsy-crossaccount-test ${DEV_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/hsy-crossaccount-test:latest
+      - docker push ${DEV_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_NAME}:latest
+      # Docker tag DEV -> PROD and then upload
+      - docker tag ${DEV_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/hsy-crossaccount-test:latest ${PROD_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/megazone-repo:latest
+      - docker push ${PROD_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/hsy-crossaccount-test:latest
       - docker images
-      - docker tag ${IMAGE_NAME}:latest ${ACCOUNT_ID}.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/${IMAGE_NAME}:latest
-      - docker images
-      - docker push ${ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_NAME}:latest
-      - printf '[{"name":"prod-atp-ecr-front","imageUri":"394374453764.dkr.ecr.ap-northeast-2.amazonaws.com/prod-atp-ecr-front:latest"}]' > imagedefinitions.json
+      #- printf '[{"name":"prod-atp-ecr-front","imageUri":"394374453764.dkr.ecr.ap-northeast-2.amazonaws.com/prod-atp-ecr-front:latest"}]' > imagedefinitions.json
       #- printf '[{"name":"${CONTAINER_NAME}","imageUri":"${ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${CONTAINER_NAME}:latest"}]' > imagedefinitions.json
-artifacts:
-  files: imagedefinitions.json
+#artifacts:
+#  files: imagedefinitions.json
