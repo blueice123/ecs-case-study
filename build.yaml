@@ -8,7 +8,7 @@ phases:
   install:
     commands:
       - apt-get update -y
-      #- apt-get install -y docker.io
+      - apt-get install -y docker.io
       - apt-get install nodejs
       - apt-get install npm
       - echo Build version check...
