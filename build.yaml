@@ -22,8 +22,8 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Packaging the jar file...
-      - mvn clean package -DskipTests
+      #- echo Packaging the jar file...
+      #- mvn clean package -DskipTests
       - pwd
       - ls -al
       - ls -al ./target/
