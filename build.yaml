@@ -18,7 +18,7 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION --registry-ids ${DEV_ACCOUNT_ID})
   build:
     commands:
       - echo Build started on `date`
@@ -35,6 +35,7 @@ phases:
       - docker tag hsy-crossaccount-test ${DEV_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/hsy-crossaccount-test:latest
       - docker push ${DEV_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_NAME}:latest
       # Docker tag DEV -> PROD and then upload
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION --registry-ids ${PROD_ACCOUNT_ID})
       - docker tag ${DEV_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/hsy-crossaccount-test:latest ${PROD_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/megazone-repo:latest
       - docker push ${PROD_ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/hsy-crossaccount-test:latest
       - docker images
