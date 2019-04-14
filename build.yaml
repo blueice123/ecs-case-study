@@ -8,14 +8,13 @@ phases:
   install:
     commands:
       - apt-get update -y
-      - apt-get install -y docker.io
+      #- apt-get install -y docker.io
+      - apt-get install nodejs
+      - apt-get install npm
       - echo Build version check...
       - aws --version
       - python --version
-      - java -version
-      - mvn --version
-      - gradle -v
-      - node -v
+      - nodejs -v && node -v
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
