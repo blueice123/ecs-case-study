@@ -11,6 +11,7 @@ phases:
       - apt-get install -y docker.io
       - apt-get install -y nodejs
       - apt-get install -y npm
+      - apt-get install -y node
       - echo Build version check...
       - aws --version
       - python --version
