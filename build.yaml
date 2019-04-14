@@ -22,11 +22,12 @@ phases:
   build:
     commands:
       - echo Build started on `date`
+      - sudo service docker restart
       #- echo Packaging the jar file...
       #- mvn clean package -DskipTests
-      - pwd
-      - ls -al
-      - ls -al ./target/
+      #- pwd
+      #- ls -al
+      #- ls -al ./target/
       #- mvn install dockerfile:build
   post_build:
     commands:
